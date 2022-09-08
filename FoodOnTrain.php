@@ -3,7 +3,7 @@
 session_start();
 include "pdo.php";
 
-if (isset($_POST['addreview'])) {
+if (isset($_POST['addreview']) && !empty($_POST['comment']) ) {
     if (isset($_SESSION['name'])) {
         $sql = $pdo->prepare("INSERT INTO review (reviewcomment, username)
 VALUES (:rc,:un)");
@@ -18,7 +18,10 @@ VALUES (:rc,:un)");
     } else {
         $_SESSION['log'] = "you can not insert a review without having an account!";
     }
+    return false;
 }
+
+
 ?>
 <?php
 
@@ -26,16 +29,24 @@ if (isset($_POST['placeorder'])) {
     if (isset($_SESSION['name'])) {
         if (!empty($_POST['promo']) && $_POST['promo'] == 'TREAT') {
             $_SESSION['done'] = "A Free Drink and Cookie are successfully added to your order!";
+            $_SESSION['promo']=true;
         } else if (empty($_POST['promo']) || $_POST['promo'] != 'TREAT') {
             $_SESSION['done'] = "Order Placed";
+            $_SESSION['promo']=false;
         }
-
-        $sql = $pdo->prepare("INSERT INTO food_order (ordertotal,username) VALUES (:did,:dn)");
+        $trackingcode= substr(number_format(time() * rand(), 0, '', ''), 0, 6);
+        $sql = $pdo->prepare("INSERT INTO food_order (ordertotal,username,OrderTrackingID,OrderStatus,OrderDesc,Promocode) VALUES (:did,:dn,:oid,:os,:od,:promo)");
         $sql->execute(
             array(
 
                 ':did' => $_SESSION['total'],
-                ':dn' => $_SESSION['name']
+                ':dn' => $_SESSION['name'],
+                ':oid' => $trackingcode,
+                ':os'=> "Pending",
+                ':od'=> $_SESSION['order'],
+                ':promo' => $_SESSION['promo']
+
+
             )
 
         );
@@ -120,6 +131,7 @@ if (isset($_POST['placeorder'])) {
             $("#cart").click(function() {
                 window.location.href = '#title4';
             });
+           
 
 
 
@@ -844,11 +856,23 @@ if (isset($_POST['placeorder'])) {
             <p><span>SHOPPING</span> CART </p>
         </h1>
         <div id="dishbuy">
+            <?php 
+            $statment = $pdo->prepare('SELECT DishName FROM dish');
+            $statment->execute();
+            $rowy = $statment->fetchAll();
+            
+            ?>
             <form method="post">
                 <br>
-                <label style="margin-left: 10px;">Please Enter Dish Name to be added to cart</label>
-                <input class="search" id="dishn" name="dishsearch" rows="4" cols="50" value="">
-
+                <label style="margin-left: 10px;">Please Select Dish Name to be added to cart</label>
+                
+                <select class="search" id="dishn" name="dishsearch">
+                    <option>--Dishes Available--</option>
+                    <?php
+                    foreach ($rowy as $output) {?>
+                    <option><?php echo $output['DishName']?></option>
+                    <?php }?>
+                </select>
                 <label style="margin-left: 10px;">Enter Quantity</label>
                 <input class="search" name="quantity" rows="4" cols="50" value="">
 
@@ -863,23 +887,25 @@ if (isset($_POST['placeorder'])) {
                         $dname = ucwords($dname);
                         $statment = $pdo->query("SELECT DishName, dishPrice, dishimage FROM dish where DishName = '$dname'");
 
-                        while ($row = $statment->fetch(PDO::FETCH_ASSOC)) {
+                        while ($rowd = $statment->fetch(PDO::FETCH_ASSOC)) {
 
 
-                            if (!$row) {
+                            if (!$rowd) {
                                 echo ("No rows found");
                                 echo ("\n");
                             }
                             $price = $_POST['quantity'];
-                            $totalprice = $row['dishPrice'] * $price;
+                            $totalprice = $rowd['dishPrice'] * $price;
+                            $order = $price. " ". $rowd['DishName'];
+                            $_SESSION['order'] = $order;
 
 
                             echo "<div id='dish1'>";
 
-                            echo '<img src="data:image/jpeg;base64,' . base64_encode($row['dishimage']) . '" height="200" width="200"/>';
+                            echo '<img src="data:image/jpeg;base64,' . base64_encode($rowd['dishimage']) . '" height="200" width="200"/>';
 
                             echo '<p><b>';
-                            echo (htmlentities($price) . '  ' . htmlentities($row['DishName']));
+                            echo (htmlentities($price) . '  ' . htmlentities($rowd['DishName']));
                             echo '</b></p>';
 
 
@@ -950,9 +976,9 @@ if (isset($_POST['placeorder'])) {
                 <div class="part2">
                     <h4>Our Services</h4>
                     <ul>
-                        <li><a href="includes/checkout.php">Book a Ticket</a></li>
+                        
                         <li><a href="FoodOnTrain.php">Food on Train</a></li>
-                        <li><a href="seasonTickets.php">Season Tickets</a></li>
+                        <li><a href="seasonTickets.php">Track Your Order</a></li>
                     </ul>
                 </div>
                 <div class="part3">

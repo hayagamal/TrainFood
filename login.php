@@ -6,15 +6,17 @@ if (isset($_POST['login']) && !empty($_POST["username"]) && !empty($_POST["pass"
   $email = $_POST["username"];
   $pw = $_POST["pass"];
 
-  $stmt = $pdo->prepare('SELECT username from account WHERE username=:em AND password=:pw');
-  $stmt->execute(array(':em' => $_POST['username'], ':pw' => $_POST['pass']));
-  $row = $stmt->fetch(PDO::FETCH_ASSOC);
+  $stmt = $pdo->prepare('SELECT * from account WHERE username=:em ');
+  $stmt->execute(array(':em' => $_POST['username']));
+  $row = $stmt->fetch();
+  
   if ($row !== false) {
+    
     $_SESSION['name'] = $_POST['username'];
-    $hashed_password = password_hash($pw, PASSWORD_DEFAULT);
-    var_dump($hashed_password);
+    $hashed_password = crypt($pw,PASSWORD_DEFAULT);
+    if (hash_equals($hashed_password,$row['password'])) {
 
-    if (password_verify($pw, $hashed_password)) {
+
       if (strpos($email, "admin")) {
         header("Location: admin-manage-dishes.php");
       } else {
@@ -56,13 +58,13 @@ if (isset($_POST["login"]) && empty($_POST["username"]) && !empty($_POST["pass"]
   <link rel="stylesheet" href="includes/style.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script src="includes/file.js"></script>
+ 
 </head>
 
 <body style="background-color:#111;">
 
   <div class="loginform">
-    <h2 class="log">Train<span>Ticket</span></h2>
+    <h2 class="log">Train<span>Food</span></h2>
   </div>
   <div class="lform">
 
@@ -70,8 +72,10 @@ if (isset($_POST["login"]) && empty($_POST["username"]) && !empty($_POST["pass"]
       <label for="email">Username:</label><br>
       <input type="text" id="username" name="username" value="">
       <br>
+      
       <label for="password">Password:</label><br>
       <input type="password" id="pass" name="pass" value="">
+      
       <p id="pwmsg" style="color: red;"></p>
 
       <?php
@@ -87,7 +91,7 @@ if (isset($_POST["login"]) && empty($_POST["username"]) && !empty($_POST["pass"]
     </form>
     <p>By continuing, you agree to TrainTicket's Conditions of Use.</p>
     <div id="new">
-      <p>New to TrainTicket? <a href="SignUp.php">Sign Up</a></p>
+      <p>New to TrainFood? <a href="SignUp.php">Sign Up</a></p>
     </div>
   </div>
 </body>

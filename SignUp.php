@@ -1,51 +1,74 @@
 <?php
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'C:/Users/User/vendor/autoload.php';
+
 session_start();
 include "pdo.php";
-if (isset($_POST['login']) && !empty($_POST["username"]) && !empty($_POST["pass"])) {
-
-  $email = $_POST["username"];
+if (isset($_POST["signup"])) {
+  $name = $_POST["username"];
+  $email = $_POST["email"];
   $pw = $_POST["pass"];
+  //Making sure that email and password do not already exist
+  $stmt = $pdo->prepare('SELECT username AND email from account WHERE username=:us AND email=:em');
+  $result=$stmt->execute(array(':us' => $_POST['username'],':em' => $_POST['email'] ));
+  $row = $stmt->fetch();
+  if(!$row){
+  $encrypted_password = crypt($pw, PASSWORD_DEFAULT);
+  $verification_code = substr(number_format(time() * rand(), 0, '', ''), 0, 6);
+  $stmt = $pdo->prepare('INSERT INTO account(username,email,password,verification_code) VALUES ( :us,:em,:pw,:vc)');
+  $stmt->execute(array(':us' => $_POST['username'], ':pw' => $encrypted_password, ':em' => $_POST['email'], ':vc' => $verification_code));
+  if ($stmt) {
+    
+    try {
+      //Email verification (not fully done yet due to some yet unfigured issues)
+      $mail = new PHPMailer(true);
+      $mail->SMTPDebug = 0;
+      print_r("ok");
+      $mail->isSMTP();
+      $mail->Host = "smtp.mail.yahoo.com"; // SMTP servers
+      $mail->Port = 465; // SMTP servers
+      $mail->SMTPAuth = true;
+      $mail->Username = 'Your_Email@yahoo.com';
+      $mail->Password = '';
+      $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+      $mail->Port = 587;
+      $mail->setFrom('Your_Email@yahoo.com', 'Name of sender');
+      $mail->addAddress($email);
+      $mail->isHTML(true);
+      $mail->SMTPOptions = array(
+        'ssl' => array(
+          'verify_peer' => false,
+          'verify_peer_name' => false,
+          'allow_self_signed' => true
+        )
+      );
+      $mail->Subject = 'Email verification';
+      $mail->Body    = '<p>Your verification code is: <b style="font-size: 30px;">' . $verification_code . '</b></p>';
 
-  $stmt = $pdo->prepare('SELECT username from account WHERE username=:em AND password=:pw');
-  $stmt->execute(array(':em' => $_POST['username'], ':pw' => $_POST['pass']));
-  $row = $stmt->fetch(PDO::FETCH_ASSOC);
-  if ($row !== false) {
-    $_SESSION['name'] = $_POST['username'];
-    $hashed_password = password_hash($pw, PASSWORD_DEFAULT);
-    var_dump($hashed_password);
-
-    if (password_verify($pw, $hashed_password)) {
-      if (strpos($email, "admin")) {
-        header("Location: admin-manage-dishes.php");
-      } else {
-        header("Location: FoodOnTrain.php");
-      }
+      $mail->send();
+     //Mail has been sent.
+      header("Location: email-verification.php?email=" . $email);
+      exit();
+    } catch (Exception $e) {
+      echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }
-  } else {
-    $_SESSION['error'] = "Invalid username or password";
     header("Location: login.php");
-    return;
   }
 }
+else {
+  $_SESSION['error']= 'Username/Email already exists, please insert another ones';
+  header("Location: Signup.php");
+  return;
+}
+}
 
-if (isset($_POST["login"]) && empty($_POST["username"]) && empty($_POST["pass"])) {
-  $_SESSION["error"] = "Username and password are required";
-  header("Location: login.php");
-  return;
-}
-if (isset($_POST["login"]) && !empty($_POST["username"]) && empty($_POST["pass"])) {
-  $_SESSION["error"] = "Password is required";
-  header("Location: login.php");
-  return;
-}
-if (isset($_POST["login"]) && empty($_POST["username"]) && !empty($_POST["pass"])) {
-  $_SESSION["error"] = "Username is required";
-  header("Location: login.php");
-  return;
-}
+
+
+
 ?>
-
-
 <html lang="en">
 
 <head>
@@ -62,7 +85,7 @@ if (isset($_POST["login"]) && empty($_POST["username"]) && !empty($_POST["pass"]
 <body style="background-color:#111;">
 
   <div class="loginform">
-    <h2 class="log">Train<span>Ticket</span></h2>
+    <h2 class="log">Train<span>Food</span></h2>
   </div>
   <div class="lform">
 
@@ -72,7 +95,9 @@ if (isset($_POST["login"]) && empty($_POST["username"]) && !empty($_POST["pass"]
       <br>
       <label for="password">Password:</label><br>
       <input type="password" id="pass" name="pass" value="">
-      <p id="pwmsg" style="color: red;"></p>
+      <br>
+      <label for="email">Email:</label><br>
+      <input type="text" id="username" name="email" value="">
 
       <?php
       if (isset($_SESSION["error"])) {
@@ -81,13 +106,12 @@ if (isset($_POST["login"]) && empty($_POST["username"]) && !empty($_POST["pass"]
         unset($_SESSION['error']);
       }
       ?>
-      <button class="but" name="login" type="submit" value="" onclick="valid()">Login
-      </button>
+      <input class="but" name="signup" type="submit" value="Register">
 
     </form>
     <p>By continuing, you agree to TrainTicket's Conditions of Use.</p>
     <div id="new">
-      <p>New to TrainTicket? <a href="sign_up_page.html">Sign Up</a></p>
+      <p>Already have an account? <a href="login.php">Login</a></p>
     </div>
   </div>
 </body>
