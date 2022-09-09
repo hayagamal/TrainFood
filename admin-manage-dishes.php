@@ -282,45 +282,9 @@ if (isset($_POST['editprice'])) {
   </div>
 
 
-  <footer>
-
-    <div class="footercontent">
-      <div class="part1">
-        <h3>Train<span>Ticket</span>
-        </h3>
-        <p>welcome to train reservation system</p>
-        <ul class="socialmedia">
-          <li><a href="http://www.fb.com"><i class="fa fa-facebook"></i></a></li>
-          <li><a href="youtube.com"><i class="fa fa-youtube"></i></a></li>
-          <li><a href="twitter.com"><i class="fa fa-twitter"></i></a></li>
-          <li><a href="instagram.com"><i class="fa fa-instagram"></i></a></li>
-        </ul>
-      </div>
-      <div class="part2">
-        <h4>Our Services</h4>
-        <ul>
-          <li><a href="includes/checkout.php">Book a Ticket</a></li>
-          <li><a href="FoodOnTrain.php">Food on Train</a></li>
-          <li><a href="seasonTickets.php">Season Tickets</a></li>
-        </ul>
-      </div>
-      <div class="part3">
-        <h4>About TrainFood</h4>
-        <ul>
-
-
-          <li><a href="aboutUs.php">About Us</a></li>
-
-        </ul>
-      </div>
-
-    </div>
-
-    <div class="footer-bottom">
-      <p>copyrights &copy; 2021 TrainFood. designed by <span>Haya Gamal</span></p>
-    </div>
-
-  </footer>
+ 
+            <div class="footercontent"></div>
+      
 </body>
 
 </html>

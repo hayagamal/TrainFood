@@ -8,26 +8,12 @@
     <title>TrainTicket</title>
     <link rel="stylesheet" href="includes/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="file.js"></script>
 </head>
 
 <body>
-    <div id="navbar">
-        <a class="logo">Train<span>Food</span></a>
-        <a class="active" href="FoodOnTrain.php">Home</a>
-        <a href="aboutUs.php">Track your Order</a>
-        <a href="aboutUs.php">About Us</a>
-        <a class="basket" href="#"><img src="images/cart.jpg"><span></span></a>
-        <?php if (isset($_SESSION['name'])) : ?>
-            <a class="login" href="logout.php">Logout</a>
-        <?php else : ?>
-            <a class="login" href="login.php">Login</a>
-        <?php endif; ?>
-    </div>
-
-
-
+    <div id="navbar"></div>
     <p style="color:#01C3A7; text-align: center; margin-top: 100px; font-weight:bold; font-size: 45px;">About Us</p>
     <div style="padding-bottom: 100px;">
         <div class="aboutUsBg" style="margin-left: 155px; margin-top: 40px;">
@@ -51,46 +37,9 @@
     <script>
         scroll();
     </script>
-    <footer>
-
-        <div class="footercontent">
-            <div class="part1">
-                <h3>Train<span>Ticket</span>
-                </h3>
-                <p>welcome to train reservation system</p>
-                <ul class="socialmedia">
-                    <li><a href="http://www.fb.com"><i class="fa fa-facebook"></i></a></li>
-                    <li><a href="youtube.com"><i class="fa fa-youtube"></i></a></li>
-                    <li><a href="twitter.com"><i class="fa fa-twitter"></i></a></li>
-                    <li><a href="instagram.com"><i class="fa fa-instagram"></i></a></li>
-                </ul>
-            </div>
-            <div class="part2">
-                <h4>Our Services</h4>
-                <ul>
-                    <li><a href="includes/checkout.php">Book a Ticket</a></li>
-                    <li><a href="FoodOnTrain.php">Food on Train</a></li>
-                    <li><a href="seasonTickets.php">Season Tickets</a></li>
-                </ul>
-            </div>
-            <div class="part3">
-                <h4>About TrainTicket</h4>
-                <ul>
-                    <li>
-                        <a href="aboutUs.html">About Us</a>
-                    </li>
-
-                    <li><a href="#">FAQs</a></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <div class="footer-bottom">
-            <p>copyrights &copy; 2021 TrainTicket. designed by <span>group 1</span></p>
-        </div>
-
-    </footer>
+       
+            <div class="footercontent"></div>
+       
 
 </body>
 

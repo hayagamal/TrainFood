@@ -3,7 +3,7 @@
 session_start();
 include "pdo.php";
 
-if (isset($_POST['addreview']) && !empty($_POST['comment']) ) {
+if (isset($_POST['addreview']) && !empty($_POST['comment'])) {
     if (isset($_SESSION['name'])) {
         $sql = $pdo->prepare("INSERT INTO review (reviewcomment, username)
 VALUES (:rc,:un)");
@@ -29,12 +29,12 @@ if (isset($_POST['placeorder'])) {
     if (isset($_SESSION['name'])) {
         if (!empty($_POST['promo']) && $_POST['promo'] == 'TREAT') {
             $_SESSION['done'] = "A Free Drink and Cookie are successfully added to your order!";
-            $_SESSION['promo']=true;
+            $_SESSION['promo'] = true;
         } else if (empty($_POST['promo']) || $_POST['promo'] != 'TREAT') {
             $_SESSION['done'] = "Order Placed";
-            $_SESSION['promo']=false;
+            $_SESSION['promo'] = false;
         }
-        $trackingcode= substr(number_format(time() * rand(), 0, '', ''), 0, 6);
+        $trackingcode = substr(number_format(time() * rand(), 0, '', ''), 0, 6);
         $sql = $pdo->prepare("INSERT INTO food_order (ordertotal,username,OrderTrackingID,OrderStatus,OrderDesc,Promocode) VALUES (:did,:dn,:oid,:os,:od,:promo)");
         $sql->execute(
             array(
@@ -42,8 +42,8 @@ if (isset($_POST['placeorder'])) {
                 ':did' => $_SESSION['total'],
                 ':dn' => $_SESSION['name'],
                 ':oid' => $trackingcode,
-                ':os'=> "Pending",
-                ':od'=> $_SESSION['order'],
+                ':os' => "Pending",
+                ':od' => $_SESSION['order'],
                 ':promo' => $_SESSION['promo']
 
 
@@ -66,473 +66,15 @@ if (isset($_POST['placeorder'])) {
     <link rel="stylesheet" href="includes/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script>
-        //nav bar sticky
-
-        function myFunction() {
-
-
-
-            var navbar = document.getElementById("navbar");
-
-
-
-            var sticky = navbar.offsetTop;
-
-
-
-            if (window.pageYOffset >= sticky) {
-
-
-
-                navbar.classList.add("sticky")
-
-
-
-            } else {
-
-
-
-                navbar.classList.remove("sticky");
-
-
-
-            }
-
-
-
-        }
-
-
-
-        function scroll() {
-
-
-
-            window.onscroll = function() {
-
-                myFunction()
-
-            };
-
-
-
-        }
-
-
-
-        //Haya Gamal 182081
-
-
-
-        $(document).ready(function() {
-
-
-            $("#cart").click(function() {
-                window.location.href = '#title4';
-            });
-           
-
-
-
-            $(".title3").click(function() {
-
-
-
-                $("#context").slideToggle("slow");
-
-            });
-
-
-
-
-
-            $(".title2").click(function() {
-
-
-
-                $("#viewall").slideToggle("slow");
-
-
-
-
-
-            });
-
-
-
-            $(".title1").click(function() {
-
-
-
-                $(".best").slideToggle("slow");
-
-
-
-
-
-
-
-            });
-
-
-
-        });
-
-
-        function displayname() {
-            var e6 = document.getElementById("divdishname");
-            e6.style.display = "block";
-
-        }
-
-        function displaydesc() {
-            var e7 = document.getElementById("divdishdesc");
-            e7.style.display = "block";
-
-        }
-
-        function displayprice() {
-            var e8 = document.getElementById("divdishprice");
-            e8.style.display = "block";
-
-        }
-
-
-
-        function addToCart() {
-
-            let productNumbers = localStorage.getItem('cartNumbers');
-
-            productNumbers = parseInt(productNumbers);
-
-            if (productNumbers) {
-
-                localStorage.setItem('cartNumbers', productNumbers + 1);
-
-                document.querySelector('.basket span').textContent = productNumbers + 1;
-
-
-
-            } else {
-
-                localStorage.setItem('cartNumbers', 1);
-
-                document.querySelector('.basket span').textContent = 1;
-
-            }
-
-        }
-
-
-
-        function cartNumbers() {
-
-            let productNumber = localStorage.getItem('cartNumbers');
-
-            if (productNumber) {
-
-                document.querySelector('.basket span').textContent = productNumber;
-
-            }
-
-        }
-
-
-
-        function getact() {
-            var act = document.getElementById("promoe");
-            act.value = act.value.toUpperCase();
-            if (act.value == 'TREAT') {
-                $('#promoe').css('color', 'green');
-                $('#promoe').css('background-color', '#90ee90');
-                $('#promoe').css('border-color', 'green');
-            } else {
-                $('#promoe').css('color', 'red');
-                $('#promoe').css('background-color', '#ffcccb');
-                $('#promoe').css('border-color', 'red');
-            }
-
-
-        }
-
-
-        function showKids() {
-
-            var x = document.getElementById("kids");
-
-            var y = document.getElementById("meals");
-
-            var z = document.getElementById("snacks");
-
-            var w = document.getElementById("beverages");
-
-            var c = document.getElementById("content");
-
-
-
-            c.style.display = "block";
-
-            x.style.display = "block";
-
-            y.style.display = "none";
-
-            z.style.display = "none";
-
-            w.style.display = "none";
-
-            document.getElementById("ki").style.border = "15px solid #111";
-
-            document.getElementById("mea").style.border = "none";
-
-            document.getElementById("sn").style.border = "none";
-
-            document.getElementById("bev").style.border = "none";
-
-
-
-
-
-        }
-
-
-
-        function showMealMenu() {
-
-
-
-            var x = document.getElementById("kids");
-
-            var y = document.getElementById("meals");
-
-            var z = document.getElementById("snacks");
-
-            var w = document.getElementById("beverages");
-
-            var c = document.getElementById("content");
-
-            c.style.display = "block";
-
-            y.style.display = "block";
-
-            x.style.display = "none";
-
-            z.style.display = "none";
-
-            w.style.display = "none";
-
-            document.getElementById("mea").style.border = "15px solid #111";
-
-
-
-            document.getElementById("bev").style.border = "none";
-
-            document.getElementById("sn").style.border = "none";
-
-            document.getElementById("ki").style.border = "none";
-
-
-
-
-
-        }
-
-
-
-        function showBeverages() {
-
-            var x = document.getElementById("kids");
-
-            var y = document.getElementById("meals");
-
-            var z = document.getElementById("snacks");
-
-            var w = document.getElementById("beverages");
-
-            var c = document.getElementById("content");
-
-
-
-            c.style.display = "block";
-
-            w.style.display = "block";
-
-            x.style.display = "none";
-
-            z.style.display = "none";
-
-            y.style.display = "none";
-
-            document.getElementById("bev").style.border = "15px solid #111";
-
-            document.getElementById("mea").style.border = "none";
-
-            document.getElementById("sn").style.border = "none";
-
-            document.getElementById("ki").style.border = "none";
-
-
-
-        }
-
-
-
-        function showSnacks() {
-
-
-
-            var x = document.getElementById("kids");
-
-            var y = document.getElementById("meals");
-
-            var z = document.getElementById("snacks");
-
-            var w = document.getElementById("beverages");
-
-            var c = document.getElementById("content");
-
-            c.style.display = "block";
-
-            z.style.display = "block";
-
-            x.style.display = "none";
-
-            w.style.display = "none";
-
-            y.style.display = "none";
-
-
-
-            document.getElementById("sn").style.border = "15px solid #111";
-
-            document.getElementById("ki").style.border = "none";
-
-            document.getElementById("mea").style.border = "none";
-
-            document.getElementById("bev").style.border = "none";
-
-
-
-
-
-        }
-
-
-
-        function Cancel(e) {
-
-            e.style.display = 'none';
-
-        }
-
-
-
-        function copyToClipboard() {
-
-            const str = document.getElementById('cop').innerText;
-
-            const el = document.createElement('textarea');
-
-            el.value = str;
-
-            document.body.appendChild(el);
-
-            el.select();
-
-            document.execCommand('copy');
-
-            document.body.removeChild(el);
-
-            var tooltip = document.getElementById("myTooltip");
-
-            tooltip.innerHTML = "Copied to clipboard.";
-
-        }
-
-
-
-        function tool(e) {
-            if (e.onmouseover) {
-
-
-                var tooltip = document.getElementById("myTooltip");
-                tooltip.style.display = "block";
-                tooltip.innerHTML = "Click on coupon to copy.";
-                tooltip.style.marginLeft = "-530px";
-
-            }
-        }
-
-
-
-        function nodisplay(e) {
-
-            var tooltip = document.getElementById("myTooltip");
-            tooltip.style.marginLeft = "-470px";
-
-            tooltip.style.display = "none";
-
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-
-            var checkbox = document.querySelector('input[type="checkbox"]');
-
-
-
-            checkbox.addEventListener('change', function() {
-
-                if (checkbox.checked) {
-
-                    var novegan = document.getElementsByClassName("notvegan");
-
-                    for (var i = 0; i < novegan.length; i++) {
-
-                        novegan[i].style.display = "none";
-
-                    }
-
-
-
-                } else {
-
-                    var novegan = document.getElementsByClassName("notvegan");
-
-                    for (var i = 0; i < novegan.length; i++) {
-
-                        novegan[i].style.display = "block";
-
-                    }
-
-
-
-                }
-
-            });
-
-        });
-    </script>
+    <script src="file.js"></script>
 
 </head>
 
 <body>
 
     <div class="bk">
-        <div id="navbar">
-            <a class="logo">Train<span>Food</span></a>
-            <a class="navi" class="active" href="FoodOnTrain.php">Home</a>
-            <a class="navi" href="includes/checkout.php">Track your Order</a>
-            <a class="navi" href="aboutUs.php">About Us</a>
-            <a class="basket" href="#dishbuy"><img src="images/cart.jpg"><span></span></a>
-            <?php if (isset($_SESSION['name'])) : ?>
-                <a class="login" href="logout.php">Logout</a>
-            <?php else : ?>
-                <a class="login" href="login.php">Login</a>
-                <a class="login" href="signup.php">Sign Up</a>
-            <?php endif; ?>
-
-        </div>
-        <div class="ad">
+    <div id="navbar"></div>
+    <div class="ad">
             <p>Enjoy your delicious fresh meal while train travelling with us. </p>
         </div>
         <div class="code">
@@ -856,22 +398,22 @@ if (isset($_POST['placeorder'])) {
             <p><span>SHOPPING</span> CART </p>
         </h1>
         <div id="dishbuy">
-            <?php 
+            <?php
             $statment = $pdo->prepare('SELECT DishName FROM dish');
             $statment->execute();
             $rowy = $statment->fetchAll();
-            
+
             ?>
             <form method="post">
                 <br>
                 <label style="margin-left: 10px;">Please Select Dish Name to be added to cart</label>
-                
+
                 <select class="search" id="dishn" name="dishsearch">
                     <option>--Dishes Available--</option>
                     <?php
-                    foreach ($rowy as $output) {?>
-                    <option><?php echo $output['DishName']?></option>
-                    <?php }?>
+                    foreach ($rowy as $output) { ?>
+                        <option><?php echo $output['DishName'] ?></option>
+                    <?php } ?>
                 </select>
                 <label style="margin-left: 10px;">Enter Quantity</label>
                 <input class="search" name="quantity" rows="4" cols="50" value="">
@@ -896,7 +438,7 @@ if (isset($_POST['placeorder'])) {
                             }
                             $price = $_POST['quantity'];
                             $totalprice = $rowd['dishPrice'] * $price;
-                            $order = $price. " ". $rowd['DishName'];
+                            $order = $price . " " . $rowd['DishName'];
                             $_SESSION['order'] = $order;
 
 
@@ -955,55 +497,13 @@ if (isset($_POST['placeorder'])) {
 
 
         </div>
-
-
-
-
-        <footer>
-
-            <div class="footercontent">
-                <div class="part1">
-                    <h3>Train<span>Food</span>
-                    </h3>
-                    <p>welcome to train food ordering system</p>
-                    <ul class="socialmedia">
-                        <li><a href="http://www.fb.com"><i class="fa fa-facebook"></i></a></li>
-                        <li><a href="youtube.com"><i class="fa fa-youtube"></i></a></li>
-                        <li><a href="twitter.com"><i class="fa fa-twitter"></i></a></li>
-                        <li><a href="instagram.com"><i class="fa fa-instagram"></i></a></li>
-                    </ul>
-                </div>
-                <div class="part2">
-                    <h4>Our Services</h4>
-                    <ul>
-                        
-                        <li><a href="FoodOnTrain.php">Food on Train</a></li>
-                        <li><a href="seasonTickets.php">Track Your Order</a></li>
-                    </ul>
-                </div>
-                <div class="part3">
-                    <h4>About TrainFood</h4>
-                    <ul>
-                        <li>
-                            <a href="aboutUs.php">About Us</a>
-                        </li>
-
-                        <li><a href="#">FAQs</a></li>
-                    </ul>
-                </div>
-
-            </div>
-
-            <div class="footer-bottom">
-                <p>copyrights &copy; 2021 TrainFood. designed by <span>Haya Gamal</span></p>
-            </div>
-
-        </footer>
+        
+            <div class="footercontent"></div>
+      
     </div>
 
 </body>
 <script>
     scroll()
 </script>
-
 </html>
