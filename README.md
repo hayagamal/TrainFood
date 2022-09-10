@@ -13,4 +13,4 @@ TrainFood is a web application for ordering meals while train travelling. Implem
 
 •	Go to ‘htdocs’ folder inside installed XAMPP folder and put the downloaded project “TrainFood” folder inside it.
 
-•	Go to http://local/TrainFood, list of project files will appear to check.
+•	Go to http://localhost/TrainFood, list of project files will appear to check.
