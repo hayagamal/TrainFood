@@ -11,6 +11,6 @@ TrainFood is a web application for ordering meals while train travelling. Implem
 
 •	Create a new database called trainticket and import the database “trainticket.sql” from data folder inside it.
 
-•	Go to ‘htdocs’ folder inside installed XAMPP folder and put the downloaded project “TrainFood” folder inside it.
+•	Inside installed XAMPP folder, Go to ‘htdocs’ folder and put the downloaded project “TrainFood” folder inside it.
 
-•	Go to http://localhost/TrainFood, list of project files will appear to check.
+•	Go to http://localhost/TrainFood, a list of project files will appear to check.
